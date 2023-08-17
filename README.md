@@ -345,9 +345,10 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
 
 1.  Khi smart contract đã được triển khai thành công, bạn có thể quản lý và tương tác với nó thông qua các chức năng đã được định nghĩa trong smart contract.
 
-**Lưu ý** : Sau khi deploy 2 smart contract trên, phải gọi hàm `setAprovalForAll` cho `NFTStaker` trong smart contract `NFT`.
-
-**Lưu ý**: Trong quá trình triển khai trên mạng Ethereum thật, bạn sẽ cần có Ether để trả phí giao dịch. Hãy đảm bảo bạn đã kết nối với ví Ethereum hoặc mạng Ethereum thật trước khi triển khai.
+**Lưu ý** : 
+- Sau khi deploy 2 smart contract trên, phải gọi hàm `setAprovalForAll` cho `NFTStaker` trong smart contract `NFT`.
+- Tài khoản dùng để deploy contract `NFT` sẽ có 100 NFT Tokens.
+- Trong quá trình triển khai trên mạng Ethereum thật, bạn sẽ cần có Ether để trả phí giao dịch. Hãy đảm bảo bạn đã kết nối với ví Ethereum hoặc mạng Ethereum thật trước khi triển khai.
 
 ### 4. **Bắt Đầu**
 
