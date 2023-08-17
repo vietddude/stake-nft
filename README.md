@@ -1,96 +1,106 @@
-
 # NFT Staking App
 
-Tài liệu này nhằm hướng dẫn nhà phát triển qua quá trình tiếp tục phát triển ứng dụng Stake NFT. Nó cung cấp cái nhìn tổng quan về cấu trúc mã nguồn hiện tại, các thực tiện tốt để tuân thủ, và các bước để triển khai các tính năng mới.
+This document aims to guide developers through the process of continuing the development of the Stake NFT application. It provides an overview of the current source code structure, best practices to adhere to, and steps to deploy new features.
 
-### Yêu Cầu Tiên Quyết
+<div align="center">
+    <img src="https://user-images.githubusercontent.com/9831342/151649198-5de7bfe2-095a-4d14-9fd4-dd53d78e94a3.jpg">
+</div>
 
-- Các yêu cầu tiên quyết cho môi trường phát triển:
-  - Cài đặt Node.js và npm.
-  - Có kiến thức về React, Ethereum và Solidity.
+### Prerequisites
 
-## Nội dung
+- Prerequisites for the development environment:
+  - Install `Node.js` and `npm`.
+  - Have knowledge of React, Ethereum, and Solidity.
 
-### 1. **Hiểu Về Stake NFT và ERC-20/ERC-1155**
+## Contents
 
-- **NFT**: là viết tắt của **_"Non-Fungible Token"_** - dạng _Token_ dựa trên blockchain đại diện cho tài sản hoặc đối tượng kỹ thuật số duy nhất và không thể chia nhỏ. NFT không thể thay thế và thường được sử dụng để xác minh quyền sở hữu và giao dịch tài sản kỹ thuật số độc nhất.
-- Định nghĩa về Stake NFT:
+### 1. **Understanding Stake NFT and ERC-20/ERC-1155**
 
-  - **Stake (Đặt cọc):** Trong ngữ cảnh tài chính và blockchain, **_"stake"_** là việc người dùng đặt cọc một số lượng tiền hoặc tài sản kỹ thuật số để tham gia vào một mạng blockchain hoặc giao thức. Hành động này thường được thực hiện để đảm bảo tính an toàn và an toàn cho mạng, cũng như để nhận được phần thưởng hoặc lợi ích trong quá trình giao dịch và chia sẻ dữ liệu.
+- **NFT**: An abbreviation for **_"Non-Fungible Token,"_** an blockchain-based token representing a unique and indivisible digital asset or object. NFTs cannot be substituted and are commonly used to verify ownership and trade unique digital assets.
+- **Stake NFT Definition:**
 
-  - **Stake NFT (Đặt cọc NFT):** là quá trình người dùng đặt cọc một hoặc nhiều NFT _(Non-Fungible Token)_ vào hệ thống hoặc dịch vụ cụ thể. Bằng cách thực hiện hành động này, người dùng có thể nhận được các lợi ích hoặc phần thưởng liên quan đến việc giữ NFT trong một khoảng thời gian cố định. Việc stake NFT có thể được sử dụng để tham gia vào các hoạt động như trò chơi, thị trường NFT, hoặc các nền tảng DeFi _(Decentralized Finance)_ trên blockchain.
-  - **Ví dụ:** Trong hệ thống "NFT Staking", người dùng có thể đặt cọc NFT của họ để tham gia vào quá trình giao dịch và kiếm lợi nhuận. Các NFT này có thể là các phiên bản độc nhất của nghệ sĩ hoặc tài sản kỹ thuật số khác. Việc stake NFT có thể giúp người dùng kiếm thêm token hoặc lợi ích khác thông qua việc giữ NFT trong khoảng thời gian xác định.
+  - **Stake:** In the context of finance and blockchain, **_"stake"_** refers to users depositing a certain amount of money or digital assets to participate in a blockchain network or protocol. This action is often done to ensure the security and safety of the network, as well as to receive rewards or benefits during transactions and data sharing.
 
-- Định nghĩa về ERC-20 và ERC-1155:
-  **Token ERC-20** là một loại tiêu chuẩn cho các token trên nền tảng blockchain Ethereum. ERC-20 là viết tắt của _"Ethereum Request for Comments 20"_, và đây là một giao thức chuẩn được đề xuất để tạo và quản lý các token dựa trên blockchain Ethereum. Các token ERC-20 thường được sử dụng để đại diện cho các tài sản hoặc giá trị khác nhau trên blockchain và có tính năng tương tự như tiền tệ.
+  - **Stake NFT:** This involves users staking one or more NFTs _(Non-Fungible Tokens)_ into a specific system or service. By doing this, users can receive benefits or rewards related to holding NFTs for a fixed period. Staking NFTs can be used to participate in activities such as gaming, NFT marketplaces, or decentralized finance _(DeFi)_ platforms on the blockchain.
+  - **Example:** In the "NFT Staking" system, users can stake their NFTs to participate in trading and earn profits. These NFTs could be unique editions of artworks or other digital assets. Staking NFTs can help users earn additional tokens or benefits by holding NFTs for a specified time period.
 
-  - **Các Đặc Điểm Tiêu Chuẩn của Token ERC-20:**
+- **ERC-20 and ERC-1155 Definitions:**
+  **ERC-20 Token** is a standard for tokens on the Ethereum blockchain platform. ERC-20 stands for _"Ethereum Request for Comments 20,"_ and it's a proposed standard protocol for creating and managing tokens based on the Ethereum blockchain. ERC-20 tokens are commonly used to represent various assets or values on the blockchain and function similarly to currency.
 
-    1.  **Transferable (Có thể Chuyển giao):** Các token ERC-20 có thể dễ dàng chuyển giao từ một địa chỉ ví Ethereum sang một địa chỉ ví khác thông qua giao dịch.
+  - **Key Characteristics of ERC-20 Tokens:**
 
-    2.  **Divisibility (Có thể Chia nhỏ):** Mỗi token ERC-20 có thể được chia nhỏ thành các đơn vị nhỏ hơn, cho phép giao dịch với số lượng token chính xác.
+    1. **Transferable:** ERC-20 tokens can be easily transferred from one Ethereum wallet address to another through transactions.
 
-    3.  **Interoperability (Tương tác được):** Các token ERC-20 tuân theo cách thức tiêu chuẩn chung, điều này giúp chúng tương tác một cách dễ dàng với các dịch vụ và ứng dụng khác nhau trên nền tảng Ethereum.
+    2. **Divisibility:** Each ERC-20 token can be divided into smaller units, allowing for precise transaction quantities.
 
-    4.  **Decimals (Số Thập phân):** Mỗi token ERC-20 có một tham số "decimals" xác định số chữ số sau dấu thập phân mà token có thể được chia nhỏ. Ví dụ, nếu decimals = 18, token có thể chia nhỏ đến 18 chữ số sau dấu thập phân.
+    3. **Interoperability:** ERC-20 tokens follow a common standard, making them easily interact with various services and applications on the Ethereum platform.
 
-    5.  **Total Supply (Tổng Cung cấp):** Mỗi token ERC-20 có một số lượng cung cấp tối đa xác định trước được quy định trong hợp đồng thông minh.
+    4. **Decimals:** Each ERC-20 token has a "decimals" parameter that determines the number of decimal places the token can be divided into. For example, if decimals = 18, the token can be divided into 18 decimal places.
 
-    6.  **Balance Inquiry (Kiểm tra Số dư):** Người dùng có thể kiểm tra số dư của token ERC-20 của họ bằng cách sử dụng các dịch vụ ví hoặc khám phá khối blockchain.
+    5. **Total Supply:** Each ERC-20 token has a predetermined maximum supply defined in the smart contract.
 
-    7.  **Standard Functions (Các Hàm Tiêu Chuẩn):** Các token ERC-20 tuân theo một tập hợp các hàm tiêu chuẩn, bao gồm `transfer` (chuyển giao token), `balanceOf` (xem số dư), và nhiều hàm khác.
+    6. **Balance Inquiry:** Users can check their ERC-20 token balances using wallet services or blockchain explorers.
 
-  **Token ERC-1155** là một tiêu chuẩn tiên tiến hơn cho việc tạo và quản lý các loại tài sản khác nhau trên nền tảng blockchain Ethereum. Được giới thiệu sau ERC-20, ERC-1155 cung cấp khả năng gộp chung nhiều loại tài sản trong cùng một hợp đồng thông minh, mang lại hiệu suất và linh hoạt cao hơn.
+    7. **Standard Functions:** ERC-20 tokens adhere to a set of standard functions, including `transfer` (token transfer), `balanceOf` (view balance), and more.
 
-  - **Các Đặc Tính Của Token ERC-1155:**
+  **ERC-1155 Token** is an advanced standard for creating and managing various types of assets on the Ethereum blockchain platform. Introduced after ERC-20, ERC-1155 provides the ability to batch multiple types of assets within the same smart contract, resulting in higher efficiency and flexibility.
 
-    1.  **Multi-Token Standard (Tiêu Chuẩn Đa Token):** ERC-1155 cho phép một hợp đồng thông minh tạo ra và quản lý nhiều loại tài sản khác nhau cùng lúc. Điều này giúp tối ưu hóa việc triển khai và quản lý hợp đồng thông minh.
+  - **Key Features of ERC-1155 Tokens:**
 
-    2.  **Economic Efficiency (Hiệu Suất Kinh Tế):** So với việc triển khai nhiều hợp đồng thông minh độc lập cho từng loại tài sản, ERC-1155 giúp tiết kiệm chi phí gas và tối ưu hóa tài nguyên mạng.
+    1. **Multi-Token Standard:** ERC-1155 allows a single smart contract to create and manage multiple types of assets simultaneously. This optimizes smart contract deployment and management.
 
-    3.  **Batch Operations (Các Thao Tác Theo Lô):** ERC-1155 cho phép thực hiện nhiều thao tác liên quan đến nhiều loại tài sản trong cùng một giao dịch, giảm độ trễ và chi phí gas.
+    2. **Economic Efficiency:** Compared to deploying separate smart contracts for each asset type, ERC-1155 saves gas costs and optimizes network resources.
 
-    4.  **Flexibility (Tính Linh Hoạt):** Mỗi token trong hợp đồng ERC-1155 có thể tuân theo cả hai tiêu chuẩn ERC-20 và ERC-721. Điều này mang lại khả năng tạo ra các ứng dụng phong phú, từ việc tạo token đơn giản đến việc phát hành NFTs.
+    3. **Batch Operations:** ERC-1155 enables performing multiple operations involving multiple asset types in a single transaction, reducing latency and gas costs.
 
-    5.  **Batch Transfers (Chuyển Giao Theo Lô):** Người dùng có thể chuyển giao nhiều loại tài sản cùng lúc trong một giao dịch duy nhất, giúp tối ưu hóa trải nghiệm người dùng.
+    4. **Flexibility:** Each token within an ERC-1155 contract can adhere to both ERC-20 and ERC-721 standards, enabling a wide range of applications from simple tokens to NFT issuance.
 
-    6.  **Single Contract (Hợp Đồng Đơn):** Mọi token và tài sản liên quan đến ERC-1155 được quản lý trong cùng một hợp đồng thông minh, giảm độ phức tạp của việc quản lý nhiều hợp đồng.
+    5. **Batch Transfers:** Users can transfer multiple asset types in a single transaction, enhancing user experience.
 
-  - **Mối Liên Kết Trong Dự Án:**
+    6. **Single Contract:** All ERC-1155-related tokens and assets are managed within a single smart contract, reducing the complexity of managing multiple contracts.
 
-    - **Staking và Belonging:** Token ERC-1155 đại diện cho tài sản NFT mà người dùng có thể stake và tích lũy giá trị.
-    - **Reward Distribution:** Token ERC-20 được sử dụng để phân phối phần thưởng cho người dùng tham gia vào staking. Các NFTs ERC-1155 có thể được sử dụng như là yếu tố tham gia chính thức vào quá trình staking và định giá giá trị thưởng.
+<div align="center">
+    <img src="https://pintu-academy.pintukripto.com/wp-content/uploads/2023/05/ERC-Tokenss-1024x598.jpeg">
+</div>
 
-### 2. **Hiểu Về Mã Nguồn Hiện Tại**
+- **Project Connections:**
 
-- **Tổng quan về cấu trúc dự án và các thành phần**
+  - **Staking and Belonging:** ERC-1155 tokens represent NFT assets that users can stake and accumulate value.
+  - **Reward Distribution:** ERC-20 tokens are used to distribute rewards for users participating in staking. ERC-1155 NFTs can serve as the formal participation element in the staking process and value appreciation.
 
-  Dự án có một cấu trúc chặt chẽ với nhiều thành phần quan trọng để triển khai chức năng staking và quản lý tài sản NFT trên mạng Ethereum. Dưới đây là tổng quan về cấu trúc dự án và các thành phần chính:
+### 2. **Understanding the Current Source Code**
+
+- **Overview of Project Structure and Components**
+
+  The project follows a well-structured design with several crucial components for implementing staking functionality and managing NFT assets on the Ethereum network. Below is an overview of the project structure and key components:
 
   - **Smart Contracts:**
-    Trong dự án, các hợp đồng thông minh (smart contracts) đóng vai trò quan trọng. Đây là mã nguồn chứa các quy tắc và hành động mà hệ thống sẽ thực hiện tự động. Trong trường hợp này, smart contracts dùng để triển khai chức năng staking và quản lý tài sản NFT.
+    In the project, smart contracts play a significant role. These contain the code that defines the rules and actions the system will automatically execute. In this case, smart contracts are used to implement staking functionality and manage NFT assets.
 
-  - **Giao Diện Người Dùng (UI):**
-    Đây là nơi người dùng có thể xem thông tin về tài sản, thực hiện các hành động staking và unstaking, và theo dõi phần thưởng của họ. UI cung cấp giao diện trực quan để tương tác với hệ thống.
+  - **User Interface (UI):**
+    This is where users can view information about assets, perform staking and unstaking actions, and track their rewards. The UI provides an intuitive interface for interacting with the system.
 
-  - **Hàm Thông Qua Ethers API:**
-    Trong dự án, Ethers API dùng để tương tác với blockchain Ethereum từ giao diện người dùng. Điều này cho phép gửi và nhận thông tin từ các smart contracts, thực hiện giao dịch và cập nhật dữ liệu trên blockchain.
+  - **Ethers API Interfacing Functions:**
+    In the project, the Ethers API is used to interact with the Ethereum blockchain from the user interface. This allows sending and receiving information from smart contracts, performing transactions, and updating data on the blockchain.
 
-  - **Xử Lý Logic Chức Năng:**
-    Logic chức năng của dự án bao gồm các hành động như staking, unstaking và tính toán phần thưởng. Đây là phần quan trọng xác định cách hệ thống hoạt động và tương tác với các thành phần khác.
+  - **Functionality Logic Processing:**
+    The functional logic of the project includes actions such as staking, unstaking, and reward calculation. This is a crucial part that determines how the system operates and interacts with other components.
 
-  Tổng quan về cấu trúc dự án và các thành phần chính giúp ta hiểu cách mỗi phần gắn liền với chức năng staking và quản lý tài sản NFT, từ đó triển khai và phát triển dự án một cách hiệu quả.
+  Understanding the project's structure and key components helps us grasp how each part relates to the staking functionality and NFT asset management, which aids in effectively deploying and developing the project.
 
-- **Thư viện và phụ thuộc quan trọng:** - **OpenZeppelin Contracts:** Đây là một bộ thư viện chứa các smart contracts sẵn có và được kiểm tra an toàn. OpenZeppelin Contracts cung cấp các hợp đồng chuẩn và các tính năng tiện ích cho việc triển khai các chức năng phổ biến như staking và quản lý NFT.
+- **Important Libraries and Dependencies:**
 
-  - **ethers.js:** Tương tự như web3.js, thư viện ethers.js cũng cung cấp API để tương tác với Ethereum. Nó được coi là gọn nhẹ hơn và có cú pháp dễ đọc hơn, làm cho việc phát triển và tương tác với smart contracts trở nên thuận tiện.
+  - **OpenZeppelin Contracts:** This is a library containing pre-built and security-audited smart contracts. OpenZeppelin Contracts provides standard contracts and utility features for deploying common functionalities like staking and NFT management.
 
-  - **React:** Thư viện React giúp bạn xây dựng giao diện người dùng (UI) cho dự án của bạn. Với cú pháp dễ đọc và khả năng tái sử dụng thành phần, React là lựa chọn phổ biến để tạo UI cho các dự án web.
+  - **ethers.js:** Similar to web3.js, the ethers.js library also provides APIs for interacting with Ethereum. It's considered lightweight and has a more readable syntax, making development and interaction with smart contracts more convenient.
 
-### 3. Lập trình smart contract
+  - **React:** The React library helps you build the user interface (UI) for your project. With its readable syntax and component reusability, React is a popular choice for creating web project UIs.
 
-**Smart Contract NFT**
-Trong mã nguồn dưới đây, một smart contract NFT được triển khai dựa trên chuẩn ERC1155. Hãy cùng tìm hiểu chi tiết về cấu trúc và chức năng của hợp đồng này:
+### 3. Smart Contract Programming
+
+**NFT Smart Contract**
+
+In the code snippet below, an NFT smart contract is implemented based on the ERC1155 standard. Let's dive into the details of the structure and functions of this contract:
 
 ```
 // SPDX-License-Identifier: MIT
@@ -100,56 +110,56 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NFT is ERC1155, Ownable {
-    // Cấu trúc lưu trữ thông tin chi tiết của NFT
+    // Structure to store NFT details
     struct NFTDetails {
         string name;
         uint256 amount;
     }
 
-    // ID duy nhất của NFT
+    // Unique ID of the NFT
     uint256 private constant NFT_ID = 0;
 
-    // Địa chỉ IPFS cơ sở cho thông tin chi tiết của NFT
+    // IPFS base address for NFT details
     string private constant BASE_URI = "https://bafybeihul6zsmbzyrgmjth3ynkmchepyvyhcwecn2yxc57ppqgpvr35zsq.ipfs.dweb.link/{id}.json";
 
-    // Mapping lưu trữ thông tin chi tiết của từng NFT
+    // Mapping to store details of each NFT
     mapping(uint256 => NFTDetails) public nftDetails;
 
     constructor() ERC1155(BASE_URI) {
-        // Tên và số lượng NFT ban đầu
+        // Name and initial amount of the NFT
         string memory name = "Charizard";
         uint256 initialAmount = 100;
 
-        // Tạo NFT và gán cho người triển khai
+        // Create the NFT and assign it to the deployer
         _mint(msg.sender, NFT_ID, initialAmount, "");
         nftDetails[NFT_ID] = NFTDetails(name, initialAmount);
     }
 
-    // Trả về thông tin chi tiết của NFT
+    // Return details of the NFT
     function getTokenDetails() external view returns (uint256, string memory, uint256) {
         NFTDetails memory details = nftDetails[NFT_ID];
         return (NFT_ID, details.name, details.amount);
     }
 
-    // Trả về số lượng NFT mà người dùng sở hữu
+    // Return the amount of NFTs owned by the user
     function getAmount(address _owner) external view returns (uint256) {
         return balanceOf(_owner, NFT_ID);
     }
 }
 ```
 
-**Mô tả:**
+**Description:**
 
-- Smart Contract NFT này triển khai một loại NFT dựa trên chuẩn ERC1155.
-- Khi triển khai, hợp đồng sẽ tạo một NFT với ID duy nhất và gán cho địa chỉ người triển khai.
-- Cấu trúc `NFTDetails` lưu trữ tên và số lượng của NFT.
-- `BASE_URI` là địa chỉ IPFS cơ sở cho thông tin chi tiết của NFT.
-- Hàm `getTokenDetails()` trả về thông tin chi tiết của NFT, bao gồm ID, tên và số lượng.
-- Hàm `getAmount(address _owner)` trả về số lượng NFT mà địa chỉ `_owner` sở hữu.
+- This NFT Smart Contract implements an NFT based on the ERC1155 standard.
+- Upon deployment, the contract will create an NFT with a unique ID and assign it to the deploying address.
+- The `NFTDetails` structure stores the name and quantity of the NFT.
+- `BASE_URI` is the IPFS base address for the detailed information of the NFT.
+- The `getTokenDetails()` function returns the detailed information of the NFT, including ID, name, and quantity.
+- The `getAmount(address _owner)` function returns the quantity of NFTs owned by the `_owner` address.
 
-**Smart Contract NftStaker với Staking và Claiming NFT**
+**NftStaker Smart Contract with Staking and Claiming NFTs**
 
-Dưới đây là một smart contract NftStaker cho phép người dùng staking và claiming NFT, cùng với mô tả các chức năng quan trọng của hợp đồng.
+Below is a NftStaker smart contract that allows users to stake and claim NFTs, along with a description of its important functions.
 
 ```
 // SPDX-License-Identifier: MIT
@@ -161,41 +171,41 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NftStaker is ERC20, ERC1155Holder, Ownable {
-    // Sự kiện khi người dùng stake NFT
+    // Event when a user stakes NFT
     event NftStaked(address indexed user, uint256 tokenId, uint256 amount);
 
-    // Sự kiện khi người dùng unstake NFT
+    // Event when a user unstakes NFT
     event NftUnstaked(address indexed user, uint256 tokenId, uint256 amount);
 
-    // Sự kiện khi người dùng claim phần thưởng
+    // Event when a user claims reward
     event RewardClaimed(address indexed user, uint256 rewardAmount);
 
-    // Liên kết với smart contract NFT (ERC1155)
+    // Link to the NFT (ERC1155) smart contract
     IERC1155 public parentNFT;
 
-    // Tỷ lệ phần thưởng cho việc staking
+    // Reward rate for staking
     uint256 public rewardRate = 100000;
 
-    // Giá trị token
+    // Token value
     uint256 public tokenValue = 1;
 
-    // Tổng số lượng NFT trong hệ thống
+    // Total pool size of NFTs
     uint256 public totalPoolSize = 0;
 
-    // ID mặc định của NFT
+    // Default NFT ID
     uint256 public defaultTokenId = 0;
 
-    // Cấu trúc lưu trữ thông tin về việc staking
+    // Structure to store staking information
     struct Stake {
         uint256 tokenId;
         uint256 amount;
-        uint256 timestamp; // Lưu thời điểm bắt đầu staking
+        uint256 timestamp; // Store the staking start timestamp
     }
 
-    // Mapping lưu trữ thông tin staking của từng người dùng
+    // Mapping to store staking information of each user
     mapping(address => Stake) public stakes;
 
-    // Modifier kiểm tra xem người dùng có đủ NFT để staking hay không
+    // Modifier to check if the user has enough NFTs to stake
     modifier hasSufficientNFTBalance(address account, uint256 amount) {
         require(
             parentNFT.balanceOf(account, defaultTokenId) >= amount &&
@@ -209,7 +219,7 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
         parentNFT = IERC1155(_nft);
     }
 
-    // Hàm cho phép người dùng stake NFT
+    // Function to allow users to stake NFTs
     function stake(uint256 _amount)
         external
         hasSufficientNFTBalance(msg.sender, _amount)
@@ -226,7 +236,7 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
         emit NftStaked(msg.sender, defaultTokenId, _amount);
     }
 
-    // Hàm cho phép người dùng unstake NFT
+    // Function to allow users to unstake NFTs
     function unstake(uint256 _amount)
         external
         hasSufficientNFTBalance(msg.sender, _amount)
@@ -247,7 +257,7 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
         );
 
         if (stakes[msg.sender].amount > _amount) {
-            stakes[msg.sender].timestamp = block.timestamp; // Reset thời điểm bắt đầu staking
+            stakes[msg.sender].timestamp = block.timestamp; // Reset the staking start timestamp
             stakes[msg.sender].amount -= _amount;
             totalPoolSize -= _amount;
         } else if (stakes[msg.sender].amount == _amount) {
@@ -256,7 +266,7 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
         emit NftUnstaked(msg.sender, stakes[msg.sender].tokenId, stakes[msg.sender].amount);
     }
 
-    // Hàm cho phép người dùng claim phần thưởng
+    // Function to allow users to claim rewards
     function claim() external hasSufficientNFTBalance(msg.sender, 0) {
         uint256 reward = calculateRewards(
             stakes[msg.sender].amount,
@@ -264,11 +274,11 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
         );
 
         _mint(msg.sender, reward);
-        stakes[msg.sender].timestamp = block.timestamp; // Reset thời điểm bắt đầu staking
+        stakes[msg.sender].timestamp = block.timestamp; // Reset the staking start timestamp
         emit RewardClaimed(msg.sender, reward);
     }
 
-    // Hàm tính toán phần thưởng dựa trên thông tin staking
+    // Function to calculate rewards based on staking information
     function calculateRewards(uint256 stakedNFTs, uint256 stakingStartTimestamp)
         internal
         view
@@ -283,12 +293,12 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
             totalPoolSize;
     }
 
-    // Hàm trả về số lượng NFT mà người dùng đã staking
+    // Function to return the amount of NFTs staked by the user
     function getStakedNFTs() public view returns (uint256) {
         return stakes[msg.sender].amount;
     }
 
-    // Hàm trả về thời gian đã staking của người dùng
+    // Function to return the staking duration of the user
     function getStakingDuration() public view returns (uint256) {
         if (stakes[msg.sender].timestamp == 0)
             return 0;
@@ -297,279 +307,303 @@ contract NftStaker is ERC20, ERC1155Holder, Ownable {
 }
 ```
 
-**Mô tả:**
+**Description:**
 
-- Smart contract `NftStaker` cho phép người dùng staking và claiming NFT dựa trên chuẩn ERC20 và ERC1155.
-- Người dùng có thể stake NFT vào hợp đồng và sau đó có thể unstake và claim phần thưởng dựa trên thời gian và số lượng NFT đã staking.
-- Hợp đồng kế thừa từ các smart contract ERC20, ERC1155Holder và Ownable của OpenZeppelin.
-- Hợp đồng sử dụng chuẩn ERC20 để tạo ra một token với tên "GameToken" (GTK) để thể hiện phần thưởng.
-- Người dùng cần chắc chắn rằng họ có đủ NFT để staking trước khi gọi hàm stake, unstake hoặc claim.
-- Các thông tin về staking và phần thưởng được tính toán dựa trên các tham số như `rewardRate`, `tokenValue`, và `stakingDuration`.
+- The `NftStaker` smart contract allows users to stake and claim NFTs based on ERC20 and ERC1155 standards.
+- Users can stake NFTs into the contract and then later unstake and claim rewards based on time and the amount of staked NFTs.
+- The contract inherits from OpenZeppelin's `ERC20`, `ERC1155Holder`, and `Ownable` smart contracts for managing staking, NFT holding, and ownership respectively.
+- The contract uses the ERC20 standard to create a token named "GameToken" (GTK) for representing rewards.
+- Users must ensure that they have enough NFTs to stake before calling the `stake`, `unstake`, or `claim` functions.
+- Information about staking and rewards is calculated based on parameters like `rewardRate`, `tokenValue`, and `stakingDuration`.
 
-### _Hướng dẫn deploy các smart contract_
+### _Guide to Deploying the Smart Contracts_
 
-**Bước 1: Truy cập Remix Ethereum**
+<div align="center">
+    <img src="img/image.png">
+</div>
 
-1.  Mở trình duyệt và truy cập vào địa chỉ: [https://remix.ethereum.org/](https://remix.ethereum.org/)
+**Step 1: Access Remix Ethereum**
 
-**Bước 2: Tạo Smart Contract**
+1. Open a web browser and go to the address: [https://remix.ethereum.org/](https://remix.ethereum.org/)
 
-1.  Bấm vào nút "File" ở góc trên bên trái và chọn "New File".
-2.  Tạo một file mới với tên tùy ý, ví dụ: "NftStaker.sol".
-3.  Dán mã nguồn smart contract vào file mới tạo.
+**Step 2: Create Smart Contracts**
 
-**Bước 3: Chọn Trình Biên Dịch và Triển Khai**
+1. Click on the "File" button in the top left corner and select "New File."
+2. Create a new file with any name you prefer, for example: "NftStaker.sol."
+3. Paste the smart contract source code into the newly created file.
 
-1.  Bấm vào tab "Solidity Compiler" ở góc trên bên phải.
-2.  Chọn phiên bản Solidity phù hợp với mã nguồn smart contract.
-3.  Bấm nút "Compile" để biên dịch mã nguồn.
+**Step 3: Select Compiler and Deploy**
 
-**Bước 4: Triển Khai Smart Contract**
+1. Click on the "Solidity Compiler" tab in the top right corner.
+2. Select the appropriate Solidity version for the smart contract source code.
+3. Click the "Compile" button to compile the source code.
 
-1.  Bấm vào tab "Deploy & Run Transactions" ở góc trên bên phải.
-2.  Chọn môi trường triển khai (ví dụ: JavaScript VM, Injected Web3, hoặc mạng Ethereum thật).
-3.  Dưới phần "Deploy" ở bên dưới, chọn smart contract muốn triển khai từ danh sách các contract đã biên dịch.
-4.  Điền các tham số cần thiết cho việc triển khai (ví dụ: địa chỉ NFT, rewardRate, tokenValue,...).
-5.  Bấm nút "Deploy" để triển khai smart contract.
+**Step 4: Deploy Smart Contracts**
 
-**Bước 5: Xác Nhận Giao Dịch**
+1. Click on the "Deploy & Run Transactions" tab in the top right corner.
+2. Choose a deployment environment (e.g., JavaScript VM, Injected Web3, or a real Ethereum network).
+3. Under the "Deploy" section below, select the smart contract you want to deploy from the list of compiled contracts.
+4. Enter the necessary deployment parameters (e.g., NFT address, rewardRate, tokenValue, ...).
+5. Click the "Deploy" button to deploy the smart contract.
 
-1.  Nếu bạn triển khai trên mạng Ethereum thật, một cửa sổ xác nhận giao dịch sẽ hiện ra.
-2.  Xác nhận giao dịch bằng cách chọn loại ví tiền, điền mật khẩu và xác nhận.
+<div align="center">
+    <img src="img/image-2.png">
+</div>
 
-**Bước 6: Đợi Triển Khai Hoàn Thành**
+**Step 5: Confirm the Transaction**
 
-1.  Sau khi xác nhận, chờ đợi quá trình triển khai hoàn thành. Remix sẽ hiển thị hash của giao dịch triển khai.
+1. If you are deploying on the real Ethereum network, a transaction confirmation window will appear.
+2. Confirm the transaction by selecting the wallet type, entering your password, and confirming.
 
-**Bước 7: Quản Lý Smart Contract**
+**Step 6: Wait for Deployment to Complete**
 
-1.  Khi smart contract đã được triển khai thành công, bạn có thể quản lý và tương tác với nó thông qua các chức năng đã được định nghĩa trong smart contract.
+1. After confirming, wait for the deployment process to complete. Remix will display the hash of the deployment transaction.
 
-**Lưu ý** : 
-- Sau khi deploy 2 smart contract trên, phải gọi hàm `setAprovalForAll` cho `NFTStaker` trong smart contract `NFT`.
-- Tài khoản dùng để deploy contract `NFT` sẽ có 100 NFT Tokens.
-- Trong quá trình triển khai trên mạng Ethereum thật, bạn sẽ cần có Ether để trả phí giao dịch. Hãy đảm bảo bạn đã kết nối với ví Ethereum hoặc mạng Ethereum thật trước khi triển khai.
+**Step 7: Manage the Smart Contracts**
 
-### 4. **Bắt Đầu**
+1. Once the smart contract is successfully deployed, you can manage and interact with it through the defined functions within the smart contract.
 
-### Bắt đầu Dự án NFT Staking
+**Note:**
 
-Dưới đây là các bước ngắn gọn để bắt đầu dự án NFT Staking của bạn:
+- After deploying the two smart contracts, you need to call the `setApprovalForAll` function for `NFTStaker` within the `NFT` smart contract.
+  <div align="center">
+    <img src="img/image-3.png">
+</div>
+- The account used to deploy the `NFT` contract will have 100 NFT Tokens.
+- During the deployment process on the real Ethereum network, you will need Ether to cover transaction fees. Make sure you are connected to an Ethereum wallet or the real Ethereum network before deploying.
 
-**Bước 1: Sao chép dự án từ GitHub**
+### 4. **Getting Started**
 
-- Mở terminal và chạy `git clone https://github.com/vietddude/stake-nft.git`.
+### Starting the NFT Staking Project
 
-**Bước 2: Cài đặt phụ thuộc**
+Here are concise steps to get started with your NFT Staking project:
 
-- Trong thư mục dự án, chạy `npm install` để cài đặt các phụ thuộc.
+**Step 1: Clone the Project from GitHub**
 
-**Bước 3: Thiết lập biến môi trường**
+- Open a terminal and run `git clone https://github.com/vietddude/stake-nft.git`.
 
-- Trong thư mục `.\src\contracts` chỉnh sửa các file `<*>-abi.json` và `<*>-address.json` để kết nối tới các smart contract.
+**Step 2: Install Dependencies**
 
-### Bắt đầu phát triển
-- Sử dụng `npm start` để khởi chạy dự án trong môi trường phát triển.
+- Inside the project directory, run `npm install` to install the dependencies.
 
-### 5. Các Chức Năng Chính
+**Step 3: Set Up Environment Variables**
 
-Dưới đây là mô tả về các chức năng chính trong ứng dụng và luồng hoạt động của từng chức năng:
+- In the `.\src\contracts` directory, edit the `<*>-abi.json` and `<*>-address.json` files to connect to the respective smart contracts.
 
-- **Hiển thị Thông tin Token và Số Dư:**
-Sau khi người dùng kết nối ví tiền thành công, thông tin về token và số dư trong ví của họ sẽ được hiển thị ở phần đầu trang. Tên token và biểu tượng cũng sẽ được hiển thị.
+### Starting the Development
 
-- **Stake (Gửi vào giao dịch):**
-Người dùng có thể gửi token NFT vào giao dịch bằng cách nhập số lượng token và nhấn nút "Stake". Khi gửi token NFT, giao dịch sẽ được tạo và người dùng sẽ thấy thông báo đang chờ giao dịch.
+- Use `npm start` to launch the project in the development environment.
 
-- **Unstake (Rút khỏi giao dịch):**
-Người dùng có thể rút token NFT khỏi giao dịch bằng cách nhập số lượng token và nhấn nút "Unstake". Giao dịch sẽ được tạo và người dùng sẽ thấy thông báo đang chờ giao dịch.
+<div align="center">
+    <img src="img/image-4.png">
+</div>
 
-- **Claim (Nhận phần thưởng):**
-Khi người dùng đã gửi token NFT vào giao dịch, họ có thể nhấn nút "Claim" để nhận phần thưởng. Phần thưởng sẽ được tính toán dựa trên số lượng token NFT đã gửi và thời gian đã gửi. Giao dịch sẽ được tạo và người dùng sẽ thấy thông báo đang chờ giao dịch.
+### 5. Key Features
 
-- **Hiển thị Thông tin Staking:**
-Ở phần dưới cùng của trang, thông tin về số lượng token NFT đang được stake và thời gian đã staking sẽ được hiển thị.
+Below is a description of the key features in the application and the workflow of each feature:
 
-### Luồng Hoạt Động Các Chức Năng:
+- **Display Token Information and Balance:**
+  After successfully connecting their wallet, users will see information about the token and their balance at the top of the page. The token name and icon will also be displayed.
 
-1. **Kết nối Ví Tiền:**
+- **Stake (Initiate Stake):**
+  Users can initiate staking by inputting the quantity of NFT tokens and clicking the "Stake" button. When NFT tokens are sent for staking, a transaction will be initiated, and users will see a notification indicating a pending transaction.
 
-   - Người dùng nhấn nút "Connect Wallet".
-   - Cửa sổ MetaMask (hoặc ví tiền khác) hiện ra yêu cầu xác nhận kết nối.
-   - Người dùng xác nhận kết nối.
-   - Ứng dụng hiển thị thông tin ví và số dư.
+- **Unstake (Initiate Unstake):**
+  Users can initiate unstaking by inputting the quantity of NFT tokens and clicking the "Unstake" button. A transaction will be initiated, and users will see a notification indicating a pending transaction.
 
-2. **Stake (Gửi vào giao dịch):**
+- **Claim (Claim Rewards):**
+  Once users have staked NFT tokens, they can click the "Claim" button to receive rewards. Rewards will be calculated based on the quantity of NFT tokens staked and the duration of the stake. A transaction will be initiated, and users will see a notification indicating a pending transaction.
 
-   - Người dùng nhập số lượng token NFT cần gửi vào giao dịch.
-   - Người dùng nhấn nút "Stake".
-   - Ứng dụng tạo giao dịch stake và hiển thị thông báo chờ giao dịch.
-   - Giao dịch stake được gửi tới mạng Ethereum.
-   - Khi giao dịch được xác nhận, số lượng token NFT trong giao dịch được cộng vào số lượng đang stake.
+- **Display Staking Information:**
+  At the bottom of the page, information about the quantity of NFT tokens being staked and the duration of the stake will be displayed.
 
-3. **Unstake (Rút khỏi giao dịch):**
+### Workflow of Key Features:
 
-   - Người dùng nhập số lượng token NFT cần rút khỏi giao dịch.
-   - Người dùng nhấn nút "Unstake".
-   - Ứng dụng tạo giao dịch unstake và hiển thị thông báo chờ giao dịch.
-   - Giao dịch unstake được gửi tới mạng Ethereum.
-   - Khi giao dịch được xác nhận, số lượng token NFT trong giao dịch được rút khỏi số lượng đang stake.
+1. **Connect Wallet:**
 
-4. **Claim (Nhận phần thưởng):**
+<div align="center">
+    <img src="img/image-5.png">
+</div>
 
-   - Người dùng nhấn nút "Claim".
-   - Ứng dụng tính toán phần thưởng dựa trên số lượng token NFT đã stake và thời gian đã staking.
-   - Ứng dụng tạo giao dịch claim và hiển thị thông báo chờ giao dịch.
-   - Giao dịch claim được gửi tới mạng Ethereum.
-   - Khi giao dịch được xác nhận, phần thưởng sẽ được cộng vào số dư của người dùng.
+- User clicks the "Connect Wallet" button.
+- MetaMask (or another wallet) popup appears requesting wallet connection.
+- User confirms the connection.
+- The application displays wallet information and balance.
 
-5. **Hiển thị Thông Tin Staking:**
-   - Ứng dụng liên tục cập nhật số lượng token NFT đang được stake và thời gian đã staking.
+2. **Stake (Initiate Stake):**
 
-### Giải thích code cho các chức năng chính trong ứng dụng:
+   - User inputs the quantity of NFT tokens to be sent for staking.
+   - User clicks the "Stake" button.
+   - The application creates a stake transaction and displays a pending transaction notification.
+   - The stake transaction is sent to the Ethereum network.
+   - Upon confirmation, the quantity of NFT tokens in the transaction is added to the staked amount.
 
-- **Kết nối Ví Tiền:**
+3. **Unstake (Initiate Unstake):**
 
-	Trong hàm `_connectWallet()`, ứng dụng sử dụng `window.ethereum.request()` để yêu cầu người dùng kết nối ví tiền. Sau khi người dùng chấp nhận kết nối, hàm `_initialize()` được gọi để khởi tạo ứng dụng với địa chỉ ví đã chọn và tạo các sự kiện lắng nghe thay đổi tài khoản.
+   - User inputs the quantity of NFT tokens to be unstaked.
+   - User clicks the "Unstake" button.
+   - The application creates an unstake transaction and displays a pending transaction notification.
+   - The unstake transaction is sent to the Ethereum network.
+   - Upon confirmation, the quantity of NFT tokens in the transaction is subtracted from the staked amount.
 
-- **Hiển thị Thông tin Token và Số Dư:**
+4. **Claim (Claim Rewards):**
 
-	Hàm `_getTokenData()` gọi đến contract `Stake` để lấy thông tin về tên và biểu tượng của token. Hàm `_updateBalance()` sử dụng contract `Stake` để lấy số dư của người dùng.
+   - User clicks the "Claim" button.
+   - The application calculates rewards based on the quantity of NFT tokens staked and the duration of staking.
+   - The application creates a claim transaction and displays a pending transaction notification.
+   - The claim transaction is sent to the Ethereum network.
+   - Upon confirmation, the reward is added to the user's balance.
 
-- **Stake (Gửi vào giao dịch):**
+5. **Display Staking Information:**
+   - The application continuously updates the quantity of NFT tokens being staked and the duration of staking.
 
-	Trong hàm `_stake(amount)`, người dùng nhập số lượng token cần stake. Hàm này gọi đến hàm `stake(amount)` của contract `Stake` để thực hiện việc stake. Sau khi giao dịch được xác nhận, `_getStakeData()` được gọi để cập nhật thông tin về số lượng token NFT đang được stake.
+### Explanation of Code for Key Features in the Application:
 
-- **Unstake (Rút khỏi giao dịch):**
+- **Connect Wallet:**
 
-	Trong hàm `_unstake(amount)`, người dùng nhập số lượng token cần rút khỏi giao dịch. Hàm này gọi đến hàm `unstake(amount)` của contract `Stake` để thực hiện việc rút khỏi giao dịch. Sau khi giao dịch được xác nhận, `_getStakeData()` và `_getTokenData()` được gọi để cập nhật thông tin.
+  In the `_connectWallet()` function, the application uses `window.ethereum.request()` to request the user to connect their wallet. After the user accepts the connection, the `_initialize()` function is called to initialize the app with the selected wallet address and create event listeners for account changes.
 
-- **Claim (Nhận phần thưởng):**
+- **Display Token Information and Balance:**
 
-	Hàm `_claim()` gọi đến hàm `claim()` của contract `Stake` để thực hiện việc nhận phần thưởng. Sau khi giao dịch được xác nhận, `_getStakeData()` được gọi để cập nhật thông tin về số lượng token NFT đang được stake.
+  The `_getTokenData()` function calls the `Stake` contract to retrieve information about the token's name and icon. The `_updateBalance()` function uses the `Stake` contract to retrieve the user's balance.
 
-- **Hiển thị Thông tin Staking:**
+- **Stake (Initiate Stake):**
 
-	Trong hàm `_getStakeData()`, hàm `getStakedNFTs()` và `getStakingDuration()` của contract `Stake` được gọi để lấy thông tin về số lượng token NFT đang được stake và thời gian đã staking. Các thông tin này được cập nhật trong state để hiển thị cho người dùng.
+  In the `_stake(amount)` function, the user inputs the quantity of tokens to stake. This function calls the `stake(amount)` function of the `Stake` contract to perform the stake. After the transaction is confirmed, `_getStakeData()` is called to update the information about the quantity of NFT tokens being staked.
 
-Ngoài ra, có các hàm như `_initializeEthers()` để khởi tạo ethers và contract, `_startPollingData()` để bắt đầu polling số dư và `_stopPollingData()` để dừng polling khi component bị unmounted.
+- **Unstake (Initiate Unstake):**
 
-Tóm lại, mỗi chức năng chính của ứng dụng liên quan đến việc giao tiếp với contract `Stake` thông qua ethers và hiển thị kết quả tương ứng cho người dùng. Các giao dịch được tạo, gửi và xác nhận trên mạng Ethereum để thực hiện các thao tác stake, unstake và claim.
+  In the `_unstake(amount)` function, the user inputs the quantity of tokens to unstake. This function calls the `unstake(amount)` function of the `Stake` contract to perform the unstake. After the transaction is confirmed, `_getStakeData()` and `_getTokenData()` are called to update the information.
 
-### 6. Thêm Tính Năng Mới
+- **Claim (Claim Rewards):**
 
-Dưới đây là hướng dẫn từng bước để triển khai các tính năng mới trong ứng dụng:
+  The `_claim()` function calls the `claim()` function of the `Stake` contract to claim rewards. After the transaction is confirmed, `_getStakeData()` is called to update the information about the quantity of NFT tokens being staked.
 
-**1. Thêm Contract và Hiển Thị Thông Tin Mới:**
+- **Display Staking Information:**
 
-- **Miêu tả và Mục đích:**
-  Giả sử bạn muốn thêm một contract mới để quản lý các loại NFT khác nhau, và bạn muốn hiển thị thông tin về số lượng NFT của từng
-  loại trong giao diện người dùng.
+  In the `_getStakeData()` function, the `getStakedNFTs()` and `getStakingDuration()` functions of the `Stake` contract are called to retrieve information about the quantity of NFT tokens being staked and the duration of staking. This information is updated in the state to be displayed to the user.
 
-     - **Thay đổi Contract và Giao Diện:**
-        - Triển khai một contract mới tương tự như `NFT` cho từng loại NFT.
-        - Cập nhật giao diện người dùng để hiển thị thông tin về từng loại NFT bằng cách gọi hàm của các contract NFT mới.
+Additionally, there are functions like `_initializeEthers()` to initialize ethers and contracts, `_startPollingData()` to start polling the balance, and `_stopPollingData()` to stop polling when the component is unmounted.
 
-     - **Sửa đổi Mã Ví dụ:**
-        - Trong các component của giao diện người dùng, cập nhật các phần liên quan đến hiển thị thông tin NFT.
+In summary, each key feature of the application involves interacting with the `Stake` contract through ethers and displaying the corresponding results to the user. Transactions are created, sent, and confirmed on the Ethereum network to perform stake, unstake, and claim operations.
 
- **2. Thêm Ví mới và Xử lý Giao Dịch:**
+### 6. Adding New Features
 
-  - **Miêu tả và Mục đích:**
-    Giả sử bạn muốn thêm tích hợp một loại ví tiền mới để người dùng có thể sử dụng để stake và rút khỏi giao dịch.
+Here are step-by-step guides for deploying new features within the application:
 
-  - **Thay đổi Contract và Giao Diện:**
+**1. Adding Contracts and Displaying New Information:**
 
-    - Thêm hợp đồng cho loại ví tiền mới.
-    - Cập nhật giao diện người dùng để cho phép người dùng chọn ví tiền muốn sử dụng.
+- **Description and Purpose:**
+  Suppose you want to add a new contract to manage different types of NFTs and display the quantity of each type in the user interface.
 
-  - **Sửa đổi Mã Ví dụ:**
-    - Trong các component của giao diện người dùng, cập nhật việc chọn ví tiền và thực hiện giao dịch với ví tiền mới.
+  - **Contract and UI Changes:**
 
-  **3. Stake Nhiều Loại NFT:**
+    - Deploy a new contract similar to `NFT` for each NFT type.
+    - Update the user interface to display information about each NFT type by calling functions of the new NFT contracts.
 
-  - **Miêu tả và Mục đích:**
-    Muốn cho phép người dùng stake nhiều loại NFT khác nhau cùng lúc và cập nhật thông tin cho từng loại NFT.
+  - **Example Code Modifications:**
+    - In UI components, update relevant sections to display information about different NFT types.
 
-  - **Thay đổi Contract và Giao Diện:**
+**2. Adding New Wallet and Handling Transactions:**
 
-    - Cập nhật hợp đồng `Stake` để hỗ trợ nhiều loại NFT.
-    - Cập nhật giao diện người dùng để cho phép người dùng chọn loại NFT khi thực hiện các thao tác stake và unstake.
+- **Description and Purpose:**
+  Suppose you want to integrate a new type of wallet so that users can use it to stake and unstake.
 
-  - **Sửa đổi Mã Ví dụ:**
-    - Trong các component của giao diện người dùng, cập nhật việc chọn loại NFT khi thực hiện stake và unstake.
+- **Contract and UI Changes:**
 
-  **4. Thêm Thông Tin Mới:**
+  - Add a contract for the new wallet type.
+  - Update the user interface to allow users to choose the wallet type they want to use.
 
-  - **Miêu tả và Mục đích:**
-    Muốn thêm thông tin mới về tỷ lệ phần thưởng, giá trị token, và kích thước tổng cộng của pool.
+- **Example Code Modifications:**
 
-  - **Thay đổi Contract và Giao Diện:**
+  - In UI components, update the wallet selection and perform transactions with the new wallet type.
 
-    - Thêm các hàm getter mới vào hợp đồng `Stake` để lấy thông tin mới.
-    - Cập nhật giao diện người dùng để hiển thị các thông tin mới.
+**3. Staking Multiple NFT Types:**
 
-  - **Sửa đổi Mã Ví dụ:**
-    - Trong các component của giao diện người dùng, cập nhật việc hiển thị các thông tin mới.
+- **Description and Purpose:**
+  Want to allow users to stake multiple different types of NFTs simultaneously and update information for each NFT type.
 
-  **5. Kiểm Tra và Xem Xét:**
+- **Contract and UI Changes:**
 
-  Trước khi triển khai, bạn nên:
+  - Update the `Stake` contract to support multiple NFT types.
+  - Update the user interface to allow users to select the NFT type when performing stake and unstake operations.
 
-  - **Kiểm tra Thử Nghiệm:** Thử nghiệm ứng dụng với các trường hợp sử dụng khác nhau để đảm bảo tính ổn định và đúng đắn của các tính năng mới.
-  - **Kiểm tra Tích Hợp:** Kiểm tra tích hợp giữa giao diện người dùng và các hợp đồng thông minh mới để đảm bảo tương thích và chính xác.
-  - **Xem Xét Bảo Mật:** Đảm bảo rằng các thay đổi trong hợp đồng thông minh được kiểm tra cẩn thận để tránh lỗ hổng bảo mật.
+- **Example Code Modifications:**
 
-  Tất cả các thay đổi và cập nhật nên được thực hiện theo quy trình kiểm tra cẩn thận để đảm bảo tính ổn định và chính xác của ứng dụng sau khi triển khai các tính năng mới.
+  - In UI components, update the NFT type selection when performing stake and unstake operations.
 
-### **Ví dụ về việc thêm tính năng mới "Stake Nhiều Loại NFT"**
+**4. Adding New Information:**
 
-1.  **Thay đổi Hợp Đồng Stake:**
+- **Description and Purpose:**
+  Want to add new information about reward rates, token values, and total pool size.
 
-   -  **Miêu tả và Mục đích:** Muốn cho phép người dùng stake nhiều loại NFT khác nhau.
+- **Contract and UI Changes:**
 
-   -  **Thay đổi Hợp Đồng Stake:**
+  - Add new getter functions to the `Stake` contract to retrieve the new information.
+  - Update the user interface to display the new information.
 
-	    - Thêm một mapping để lưu số lượng NFT staked của mỗi loại.
-	    - Thay đổi hàm `stake` để nhận thêm tham số `tokenId` cho loại NFT.
+- **Example Code Modifications:**
 
-   ```
-    contract NftStaker is ERC20, ERC1155Holder, Ownable {
-        // Existing code...
+  - In UI components, update the display of the new information.
 
-        mapping(address => mapping(uint256 => uint256)) public stakedNFTsByType;
+**5. Testing and Review:**
 
-        function stake(uint256 _amount, uint256 _tokenId)
-            external
-            hasSufficientNFTBalance(msg.sender, _amount)
-        {
-            stakes[msg.sender] = Stake(_tokenId, _amount, block.timestamp);
-            parentNFT.safeTransferFrom(
-                msg.sender,
-                address(this),
-                _tokenId,
-                _amount,
-                "0x00"
-            );
-            totalPoolSize += _amount;
+Before deployment, you should:
 
-            // Update the stakedNFTsByType mapping
-            stakedNFTsByType[msg.sender][_tokenId] += _amount;
+- **Test Thoroughly:** Test the application with various use cases to ensure the stability and correctness of the new features.
+- **Integration Testing:** Test the integration between the user interface and the new smart contracts to ensure compatibility and accuracy.
+- **Security Review:** Ensure that changes in the smart contracts are carefully reviewed to avoid security vulnerabilities.
 
-            emit NftStaked(msg.sender, _tokenId, _amount);
-        }
+All changes and updates should be done through a careful testing process to ensure the stability and accuracy of the application after deploying new features.
 
-        // Existing code...
-    }
-   ```
+### **Example of Adding the New Feature "Staking Multiple NFT Types"**
 
-2.  **Cập nhật Giao Diện Người Dùng:**
+1.  **Contract Changes for Staking Multiple NFT Types:**
 
-   -  **Miêu tả và Mục đích:** Cập nhật giao diện để cho phép người dùng chọn loại NFT khi thực hiện stake và unstake.
+- **Description and Purpose:** To allow users to stake multiple types of NFTs.
 
-   -  **Cập nhật Giao Diện Người Dùng:**
+- **Contract Changes:**
 
-	    - Cập nhật component `Stake` và `Unstake` để cho phép người dùng chọn loại NFT khi thực hiện thao tác.
+  - Add a mapping to store the staked NFT quantity for each type.
+  - Modify the `stake` function to accept an additional parameter `tokenId` for the NFT type.
+
+```
+ contract NftStaker is ERC20, ERC1155Holder, Ownable {
+     // Existing code...
+
+     mapping(address => mapping(uint256 => uint256)) public stakedNFTsByType;
+
+     function stake(uint256 _amount, uint256 _tokenId)
+         external
+         hasSufficientNFTBalance(msg.sender, _amount)
+     {
+         stakes[msg.sender] = Stake(_tokenId, _amount, block.timestamp);
+         parentNFT.safeTransferFrom(
+             msg.sender,
+             address(this),
+             _tokenId,
+             _amount,
+             "0x00"
+         );
+         totalPoolSize += _amount;
+
+         // Update the stakedNFTsByType mapping
+         stakedNFTsByType[msg.sender][_tokenId] += _amount;
+
+         emit NftStaked(msg.sender, _tokenId, _amount);
+     }
+
+     // Existing code...
+ }
+```
+
+**2. Updating the User Interface:**
+
+- **Description and Purpose:** Update the user interface to allow users to choose the NFT type when performing stake and unstake operations.
+
+- **UI Changes:**
+
+  - Update the `Stake` and `Unstake` components to allow users to select the NFT type when performing the actions.
 
 ```
     // ... Existing code ...
@@ -619,13 +653,14 @@ Dưới đây là hướng dẫn từng bước để triển khai các tính n�
     // ... Existing code ...
 ```
 
-3. **Cập nhật Mã Ví Dụ:**
+**3. Updating the Example Code:**
 
-   - **Miêu tả và Mục đích:** Cập nhật các hàm xử lý giao dịch để cho phép người dùng chọn loại NFT khi thực hiện stake và unstake.
+- **Description and Purpose:** Update the transaction handling functions to allow users to choose the NFT type when performing stake and unstake actions.
 
-   - **Cập nhật Mã Ví Dụ:**
+- **Updated Example Code:**
 
-	    - Trong các hàm `_stake` và `_unstake`, cập nhật việc gọi hàm `stake` và `unstake` của hợp đồng với thêm tham số `tokenId`.
+  - In the `_stake` and `_unstake` functions, update the calls to the `stake` and `unstake` functions of the contract with the additional parameter `tokenId`.
+
 ```
     // ... Existing code ...
 
@@ -658,33 +693,34 @@ Dưới đây là hướng dẫn từng bước để triển khai các tính n�
     // ... Existing code ...
 ```
 
-### 7.  **Xử Lý Giao Dịch**
-   Để quản lý giao dịch Ethereum và tương tác với blockchain, bạn cần sử dụng thư viện `ethers.js`, một thư viện phổ biến cho việc tương tác với Ethereum blockchain. Dưới đây là hướng dẫn về cách gửi giao dịch, theo dõi sự kiện giao dịch và xử lý lỗi giao dịch trong ứng dụng của bạn.
+### 7. **Handling Transactions**
 
-  1.  **Gửi Giao Dịch:**
+To manage Ethereum transactions and interact with the blockchain, you need to use the `ethers.js` library, a popular library for interacting with the Ethereum blockchain. Below is a guide on how to send transactions, listen for transaction events, and handle transaction errors in your application.
 
-      Để gửi một giao dịch Ethereum, bạn cần sử dụng phương thức `sendTransaction` của đối tượng `Signer`. Dưới đây là cách bạn có thể gửi giao dịch:
+1.  **Sending Transactions:**
 
-        ```
-        // Assuming you have a connected Signer instance
-        async function sendTransaction(toAddress, value) {
-            try {
-                const txResponse = await signer.sendTransaction({
-                    to: toAddress,
-                    value: ethers.utils.parseEther(value.toString()), // Convert value to wei
-                });
-                console.log("Transaction sent:", txResponse.hash);
-                return txResponse.hash;
-            } catch (error) {
-                console.error("Transaction error:", error);
-                throw error;
-            }
-        }
-        ```
+    To send an Ethereum transaction, you need to use the `sendTransaction` method of the `Signer` object. Here's how you can send a transaction:
 
-  2.  **Theo Dõi Sự Kiện Giao Dịch:**
+         ```
+         // Assuming you have a connected Signer instance
+         async function sendTransaction(toAddress, value) {
+             try {
+                 const txResponse = await signer.sendTransaction({
+                     to: toAddress,
+                     value: ethers.utils.parseEther(value.toString()), // Convert value to wei
+                 });
+                 console.log("Transaction sent:", txResponse.hash);
+                 return txResponse.hash;
+             } catch (error) {
+                 console.error("Transaction error:", error);
+                 throw error;
+             }
+         }
+         ```
 
-      Để theo dõi sự kiện của một giao dịch, bạn có thể sử dụng phương thức `wait` của đối tượng `TransactionResponse`. Dưới đây là cách bạn có thể theo dõi sự kiện:
+2.  **Tracking Transaction Events:**
+
+    To monitor events related to a transaction, you can utilize the `wait` method of the `TransactionResponse` object. Below is how you can track transaction events:
 
         ```
         async function waitForTransaction(txHash) {
@@ -704,44 +740,86 @@ Dưới đây là hướng dẫn từng bước để triển khai các tính n�
         }
         ```
 
-    3.  **Xử Lý Lỗi Giao Dịch:**
+3.  **Handling Transaction Errors:**
 
-        Khi gửi giao dịch, có thể xảy ra nhiều loại lỗi, bao gồm lỗi từ người dùng từ chối giao dịch, không đủ ETH để trả phí gas, lỗi hợp đồng thông minh, vv. Dưới đây là cách bạn có thể xử lý lỗi giao dịch:
+    When sending transactions, various types of errors can occur, including user-rejected transactions, insufficient ETH to cover gas fees, smart contract errors, and more. Here's how you can handle transaction errors:
 
-        ```
-        	async function sendTransaction(toAddress, value) {
-        	    try {
-        	        // ... Sending transaction code ...
+    ```
+    	async function sendTransaction(toAddress, value) {
+    	    try {
+    	        // ... Sending transaction code ...
 
-        	        // Wait for the transaction to be mined
-        	        const txReceipt = await txResponse.wait();
+    	        // Wait for the transaction to be mined
+    	        const txReceipt = await txResponse.wait();
 
-        	        if (txReceipt.status === 1) {
-        	            console.log("Transaction successful!");
-        	            // Handle success case
-        	        } else {
-        	            console.log("Transaction failed!");
-        	            // Handle failure case
-        	        }
-        	    } catch (error) {
-        	        if (error.code === ethers.utils.Logger.errors.CALL_EXCEPTION) {
-        	            console.log("Contract execution error!");
-        	            // Handle contract execution error
-        	        } else if (error.code === ethers.utils.Logger.errors.TRANSACTION_REVERTED) {
-        	            console.log("Transaction reverted!");
-        	            // Handle transaction reverted error
-        	        } else if (error.code === ERROR_CODE_TX_REJECTED_BY_USER) {
-        	            console.log("Transaction rejected by user!");
-        	            // Handle user rejection
-        	        } else {
-        	            console.error("Transaction error:", error);
-        	            // Handle other errors
-        	        }
-        	        throw error;
-        		}
-        	}
-        ```
+    	        if (txReceipt.status === 1) {
+    	            console.log("Transaction successful!");
+    	            // Handle success case
+    	        } else {
+    	            console.log("Transaction failed!");
+    	            // Handle failure case
+    	        }
+    	    } catch (error) {
+    	        if (error.code === ethers.utils.Logger.errors.CALL_EXCEPTION) {
+    	            console.log("Contract execution error!");
+    	            // Handle contract execution error
+    	        } else if (error.code === ethers.utils.Logger.errors.TRANSACTION_REVERTED) {
+    	            console.log("Transaction reverted!");
+    	            // Handle transaction reverted error
+    	        } else if (error.code === ERROR_CODE_TX_REJECTED_BY_USER) {
+    	            console.log("Transaction rejected by user!");
+    	            // Handle user rejection
+    	        } else {
+    	            console.error("Transaction error:", error);
+    	            // Handle other errors
+    	        }
+    	        throw error;
+    		}
+    	}
+    ```
 
-### 8. **Kiểm Tra Và Triển Khai**
+### 8. **Testing and Deployment**
 
-_ongoing_ 🚧
+After implementing new features or making changes to your NFT staking application, it's important to thoroughly test and then deploy the updated application to a live Ethereum network. Here's a guide on how to test and deploy your application:
+
+1. **Testing:**
+
+- **Unit Testing:** Write unit tests to ensure that the new features and changes are functioning as expected. Use testing frameworks like Truffle, Hardhat, or Waffle to create and run tests for your smart contracts.
+
+- **Integration Testing:** Test the integration of your smart contracts with the frontend application. Check that the frontend properly interacts with the smart contracts and displays accurate information.
+
+- **User Testing:** Conduct user testing to gather feedback from actual users. This can help you identify any usability issues or bugs that may have been missed during development.
+
+2. **Deploying to Testnets:**
+
+   Before deploying to the main Ethereum network, consider deploying your updated application to Ethereum testnets (Rinkeby, Ropsten, Kovan) to ensure everything is working correctly. Here's how you can deploy to a testnet:
+
+   - Use Truffle, Hardhat, or Remix to deploy your smart contracts to a testnet. Update the deployment scripts or Remix configurations to target the desired testnet.
+
+   - Deploy your frontend application to a web hosting service or platform like GitHub Pages, Netlify, or Vercel. Update the contract addresses and ABIs in your frontend code to point to the deployed contracts on the testnet.
+
+   - Test the frontend application on the testnet to ensure that it properly interacts with the deployed smart contracts.
+
+3. **Deployment to Mainnet:**
+
+   Once you're confident in the functionality and stability of your application, you can proceed to deploy it to the Ethereum mainnet. Here's how you can do it:
+
+   - Update the deployment scripts or Remix configurations to target the Ethereum mainnet.
+
+   - Prepare enough Ether to cover the gas fees required for deploying the smart contracts and interacting with them on the mainnet.
+
+   - Deploy your smart contracts to the Ethereum mainnet using the same methods as you did for the testnet.
+
+   - Deploy the updated frontend application to a web hosting service or platform, making sure to update contract addresses and ABIs to point to the mainnet deployment.
+
+   - Inform your users about the deployment to the mainnet and provide them with the necessary information to interact with the application.
+
+4. **Monitoring and Maintenance:**
+
+   After deployment, continuously monitor the application for any issues or unexpected behavior. Address any user-reported problems promptly and consider releasing updates as needed.
+
+   Regularly review your smart contracts for security vulnerabilities and keep them up-to-date with best practices.
+
+   By following these steps, you can ensure that your NFT staking application is thoroughly tested and properly deployed to provide a secure and user-friendly experience for your users on the Ethereum network.
+
+_...ongoing_ 🚧
